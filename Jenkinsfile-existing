@@ -1,0 +1,54 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Define environment variables
+        DOCKER_HUB_CREDS = credentials('dockerhub-credentials') // Jenkins credentials ID
+        IMAGE_NAME = "jenkins-existing-your-dockerhub-username/your-repo-name"
+        IMAGE_TAG = "latest"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Check out the code from your repository
+                checkout scm
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                
+                // You can add more tags if needed
+                // sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:v1.0"
+            }
+        }
+        
+        stage('Login to DockerHub') {
+            steps {
+                // Use the credentials to log in to Docker Hub
+                sh 'echo $DOCKER_HUB_CREDS_PSW | docker login -u $DOCKER_HUB_CREDS_USR --password-stdin'
+            }
+        }
+        
+        stage('Push to DockerHub') {
+            steps {
+                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                
+                // If you added more tags, push those too
+                // sh "docker push ${IMAGE_NAME}:v1.0"
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Always log out from Docker Hub for security
+            sh 'docker logout'
+            
+            // Clean up local images to save space
+            sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true"
+        }
+    }
+}
