@@ -1,0 +1,12 @@
+# -------------------- owner.yaml --------------------
+# Single-source-of-truth for this repository's ownership and escalation data.
+# Every field marked **Required** must be present in every repo.
+# all double quotes
+# -------------------- owner.yaml --------------------
+"service_name": "user-authentication-service"
+"team_name": "security-team"
+"team_email": "security@darwin.com"
+"slack_channel": "#security-alerts"
+"domain": "authentication"
+"jira_project": "https://darwinda.atlassian.net/browse/AUTH"
+"oncall": "https://app.incident.io/darwinsdf/on-call/schedules/01J3B4XDGK7DNB04T097TE"
